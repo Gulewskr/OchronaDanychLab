@@ -1,0 +1,4 @@
+AuthUserFile "C:\apache\.htpasswd"
+AuthName "Please Enter User & PW"
+AuthType Basic
+require valid-user

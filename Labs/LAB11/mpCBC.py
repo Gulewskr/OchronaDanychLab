@@ -4,12 +4,12 @@ import ctypes
 
 from Crypto.Cipher import DES
 from Crypto.Random import get_random_bytes
-from Crypto.Util import Counter
 
-times = 10000
-nonce = "0000"
-ctrEncrypt = Counter.new(int(DES.block_size*8/2), prefix=nonce)
-ctrDecrypt = Counter.new(int(DES.block_size*8/2), prefix=nonce)
+counter = b'\x00'*64
+print(counter)
+print(len(counter))
+print(counter + b'\x01')
+print(len(counter))
 
 def xor64(a, b):
     block = bytearray(a)
@@ -17,29 +17,33 @@ def xor64(a, b):
         block[j] = a[j] ^ b[j]
     return block
 
+'''
+def encrypt_CTR():
+    encrypted_block = xor64(plain_text_block, encrypted_counter)
+    return encrypted
+
+
 def encrypt_CBC_serial(key, plain_text, iv):
-    ctr = Counter.new(64, prefix=nonce)
     vector = bytearray(plain_text)
-    des = DES.new(key, DES.MODE_CTR, counter = ctrEncrypt)
+    des = DES.new(key)
     for i in range(no_blocks):
         offset = i*block_size
         block = plain_text[offset:offset+block_size]
         encrypted = bytes(xor64(block, iv))
-        for j in range(times):
+        for j in range(10000):
            encrypted = des.encrypt(encrypted)
         vector[offset:offset+block_size] = bytearray(encrypted)
         iv = encrypted
     return bytes(vector)        
 
 def decrypt_CBC_serial(key, encrypted, iv):
-    ct2 = Counter.new(64, prefix=nonce)
     vector = bytearray(encrypted)
-    des = DES.new(key, DES.MODE_CTR, counter = ctrDecrypt)
+    des = DES.new(key)
     for i in range(no_blocks):
         offset = i*block_size
         block = encrypted[offset:offset+block_size]
         intermediate = block
-        for j in range(times):
+        for j in range(10000):
            intermediate = des.decrypt(intermediate)
         decrypted = bytes(xor64(intermediate, iv))
         vector[offset:offset+block_size] = bytearray(decrypted)
@@ -68,7 +72,7 @@ print('CBC Decrypt time serial: ', (time.time() - starttime))
 def mapper(i):
     offset = i*block_size
     block = bytes(shared_data[offset:offset+block_size])
-    for j in range(times):
+    for j in range(10000):
         block = des.decrypt(block)
     if i==0: 
         previous_block = iv
@@ -78,7 +82,7 @@ def mapper(i):
     output_data[offset:offset+block_size] = bytearray(decrypted)
     return i
 
-des = DES.new(key, DES.MODE_CTR, counter = ctrDecrypt)
+des = DES.new(key, mode=)
 shared_data = multiprocessing.RawArray(ctypes.c_ubyte, encryptedCBC)
 output_data = multiprocessing.RawArray(ctypes.c_ubyte, encryptedCBC)
 pool = multiprocessing.Pool(16)
@@ -87,3 +91,4 @@ pool.map(mapper, range(no_blocks))
 print('CBC Decrypt time parallel: ', (time.time() - starttime))
 decrypted = bytes(output_data)
 #print(decrypted)
+'''
