@@ -1,9 +1,10 @@
 #bez autoryzacji
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from database import User, Note, ConnectorNote
 from notesCrypt import decryptNote, encryptNote
 from database import db
+from valid import passwordValidation, textVallidation, loginVallidation, emailVallidation
 
 main = Blueprint('main', __name__)
 
@@ -63,15 +64,26 @@ def addNote_post():
     users = request.form.get('users')
 
     #walidacja danych formularza
+    if not textVallidation(title):
+        flash('Bad title format.')
+        return redirect(url_for('main.addNote'))
+    if not textVallidation(note):
+        flash('Bad note format.')
+        return redirect(url_for('main.addNote'))
+    if not textVallidation(users):
+        flash('Bad users format.')
+        return redirect(url_for('main.addNote'))
 
     allowedUsers = users.split(" ")
 
     #Szyfrowanie notatki
+    title = encryptNote(title)
+    note = encryptNote(note)
 
     #Utworzenie nowej notatki
     newNote = Note(
-        title = encryptNote(title),
-        text = encryptNote(note),
+        title = title,
+        text = note,
         isPublic = public,
         userID = userId )
 

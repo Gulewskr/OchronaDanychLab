@@ -2,8 +2,11 @@
 from xmlrpc.client import DateTime
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
+#bazadanych
 from database import db, User, ResetToken
 from datetime import datetime
+#walidacja
+from valid import passwordValidation, loginVallidation, emailVallidation
 
 auth = Blueprint('auth', __name__)
 
@@ -18,6 +21,12 @@ def login_post():
     password = request.form.get('password')
 
     #walidacja
+    if not passwordValidation(password):
+        flash('Bad password format. 1 lowercase, 1 uppercase, 1 number, at least 8 character')
+        return redirect(url_for('auth.login'))
+    if not loginVallidation(login):
+        flash('Bad login format. Only numbers and letters avaible.')
+        return redirect(url_for('auth.login'))
 
     #sprawdzenie poprawności logowania
     user = User.query.filter(User.login == login).first()
@@ -39,6 +48,17 @@ def signup_post():
     email = request.form.get('email')
     login = request.form.get('name')
     password = request.form.get('password')
+
+    #walidacja
+    if not passwordValidation(password):
+        flash('Bad password format. 1 lowercase, 1 uppercase, 1 number, at least 8 character')
+        return redirect(url_for('auth.login'))
+    if not loginVallidation(login):
+        flash('Bad login format. Only numbers and letters avaible.')
+        return redirect(url_for('auth.login'))
+    if not emailVallidation(email):
+        flash('Bad email format.')
+        return redirect(url_for('auth.login'))
 
     #sprawdzenie czy użytkownik o podanym emailu lub loginie już istnieje
     user = User.query.filter((User.email == email) | (User.login == login)).first()
