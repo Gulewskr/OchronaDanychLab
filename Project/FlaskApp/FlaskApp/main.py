@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 from database import User, Note, ConnectorNote
+from notesCrypt import decryptNote, encryptNote
 from database import db
 
 main = Blueprint('main', __name__)
@@ -10,6 +11,11 @@ main = Blueprint('main', __name__)
 def index():
     #Dodanie pobierania notatek tylko do których użytkownik ma dostęp
     publicNotes = Note.query.filter(Note.isPublic)
+
+    for note in publicNotes:
+        note.title = decryptNote(note.title)
+        note.text = decryptNote(note.text)
+
     return render_template('index.html', publicNotes = publicNotes)
 
 @main.route('/profile')
@@ -24,8 +30,19 @@ def notes():
     userNotes = Note.query.filter(Note.userID == current_user.login)
     publicNotes = Note.query.filter(Note.isPublic & (Note.userID != current_user.login))
     connectedNotes = Note.query.filter((ConnectorNote.userID == current_user.id) & (ConnectorNote.noteID == Note.id))
-
+    
     #Odszyfrowanie notatki
+    for note in userNotes:
+        note.title = decryptNote(note.title)
+        note.text = decryptNote(note.text)
+
+    for note in publicNotes:
+        note.title = decryptNote(note.title)
+        note.text = decryptNote(note.text)
+
+    for note in connectedNotes:
+        note.title = decryptNote(note.title)
+        note.text = decryptNote(note.text)
 
     return render_template('noteList.html', userNotes = userNotes, publicNotes = publicNotes, connectedNotes = connectedNotes)
 
@@ -53,8 +70,8 @@ def addNote_post():
 
     #Utworzenie nowej notatki
     newNote = Note(
-        title = title,
-        text = note,
+        title = encryptNote(title),
+        text = encryptNote(note),
         isPublic = public,
         userID = userId )
 

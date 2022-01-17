@@ -5,6 +5,7 @@ import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from config import Config
+from notesCrypt import encryptNote
 
 db = SQLAlchemy()
 
@@ -47,6 +48,12 @@ class ConnectorNote(db.Model):
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     noteID = db.Column(db.Integer, db.ForeignKey('note.id'))
 
+class ResetToken(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    token = db.Column(db.String())
+    DataCreate = db.Column(db.DateTime())
+
 def fillDefault():
     user = User(
         login='Tester', 
@@ -61,36 +68,36 @@ def fillDefault():
     db.session.add(user)
 
     note = Note(
-        title='Testowa notatka', 
-        text='To jest testowa notatka - notatka jest ustawiona jako publiczna',
+        title=encryptNote('Testowa notatka'), 
+        text=encryptNote('To jest testowa notatka - notatka jest ustawiona jako publiczna'),
         isPublic=True,
         userID='Tester')
     db.session.add(note)
 
     note = Note(
-        title='Testowa notatka 2', 
-        text='To jest testowa notatka - notatka jest ustawiona jako prywanta',
+        title=encryptNote('Testowa notatka 2'), 
+        text=encryptNote('To jest testowa notatka - notatka jest ustawiona jako prywanta'),
         isPublic=False,
         userID='Tester')
     db.session.add(note)
 
     note = Note(
-        title='Testowa notatka 3', 
-        text='To jest testowa notatka publiczna 2 - notatka jest ustawiona jako publiczna',
+        title=encryptNote('Testowa notatka 3'), 
+        text=encryptNote('To jest testowa notatka publiczna 2 - notatka jest ustawiona jako publiczna'),
         isPublic=True,
         userID='Tester2')
     db.session.add(note)
 
     note = Note(
-        title='Only user 2', 
-        text='To jest testowa notatka prywatna testera 2 - nikt inny jej nie widzi',
+        title=encryptNote('Only user 2'), 
+        text=encryptNote('To jest testowa notatka prywatna testera 2 - nikt inny jej nie widzi'),
         isPublic=False,
         userID='Tester2')
     db.session.add(note)
 
     note = Note(
-        title='Testowa notatka prywatna dla wiekszosci 3', 
-        text='To jest testowa notatka prywatna testera 2 - notatka jest widoczna dla drugiego użytkownika',
+        title=encryptNote('Testowa notatka prywatna dla wiekszosci 3'), 
+        text=encryptNote('To jest testowa notatka prywatna testera 2 - notatka jest widoczna dla drugiego użytkownika'),
         isPublic=False,
         userID='Tester2')
     db.session.add(note)

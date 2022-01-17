@@ -6,4 +6,5 @@ class Config(object):
     #pieprz do haseł
     PEPPER = b'p23k23o3'
     #key do szyfrowania notatek
-    NOTEKEY = 'klucz'
+    NOTEKEY = b'aaaabbbbccccdddd'
+    NOTEKIV = b'aaaabbbbccccdddd'

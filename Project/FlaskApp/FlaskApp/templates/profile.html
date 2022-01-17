@@ -12,10 +12,13 @@
   {{user.salt}}
   {% endfor %}
 </div>
-<a href="{{ url_for('main.notes') }}" class="navbar-item">
+<a class="button is-block is-info is-large is-fullwidth"  href="{{ url_for('main.notes') }}">
   See your notes
 </a>
-<a href="{{ url_for('main.addNote') }}" class="navbar-item">
+<a class="button is-block is-info is-large is-fullwidth"  href="{{ url_for('main.addNote') }}">
   Add new note
+</a>
+<a class="button is-block is-info is-large is-fullwidth" href="{{ url_for('auth.passwordResetPassword') }}">
+  Reset Password
 </a>
 {% endblock %}
