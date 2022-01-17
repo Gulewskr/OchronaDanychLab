@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="title">
+  Welcome, {{ name }}!
+</h1>
+<h1>
+  Your notes
+</h1>
+<div>
+    {% for note in userNotes %}
+    {{note.id}}<br />
+    {{note.title}}<br />
+    {{note.text}}<br />
+    {{note.isPublic}}<br />
+    {{note.userID}}<br />
+    {% endfor %}
+</div>
+<h1>
+  Notes Public
+</h1>
+<div>
+  {% for note in publicNotes %}
+  {{note.id}}<br />
+  {{note.title}}<br />
+  {{note.text}}<br />
+  {{note.isPublic}}<br />
+  {{note.userID}}<br />
+  {% endfor %}
+</div>
+<h1>
+  Notes Others that you are allowed
+</h1>
+<div>
+  {% for note in connectedNotes %}
+  {{note.id}}<br />
+  {{note.title}}<br />
+  {{note.text}}<br />
+  {{note.isPublic}}<br />
+  {{note.userID}}<br />
+  {% endfor %}
+</div>
+
+{% endblock %}

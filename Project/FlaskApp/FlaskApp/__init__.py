@@ -2,14 +2,13 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from database import db, User, fillDefault
+from config import Config
 
 #inicjalizacja
 app = Flask(__name__)
 
-#klucz do szyfrowania sesji użytkownika
-app.config['SECRET_KEY'] = 'secret-key-goes-here'
-#adress do bazy danych
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SECRET_KEY'] =  Config.SECRET_KEY
+app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URL
 
 
 #Tworzenie bazy danych

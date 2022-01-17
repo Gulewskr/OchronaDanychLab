@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Dodaj nową notatkę, {{ name }}!
+</h1>
+<div>
+  Twoje ID, {{ UserID }}!
+</div>
+<form method="POST" action="/notes/new">
+    <div class="field">
+        <div class="control">
+            <input class="input is-large" type="text" name="title" placeholder="Your Note Title" autofocus="">
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input class="input is-large" type="text" name="note" placeholder="Your Note" autofocus="">
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input type="checkbox" name="isPublic"> Public (Visible by all users)
+        </div>
+    </div>
+    <div class="field">
+        <div class="control">
+            <input class="input is-large" type="text" name="users" placeholder="Users Allowed to see note" autofocus="">
+        </div>
+    </div>
+    <button class="button is-block is-info is-large is-fullwidth">Submit</button>
+</form>
+{% endblock %}

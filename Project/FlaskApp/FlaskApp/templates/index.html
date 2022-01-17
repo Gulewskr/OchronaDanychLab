@@ -2,9 +2,23 @@
 
 {% block content %}
 <h1 class="title">
-  Flask Login Example
+  Notes Aplication - Rafał Gulewski
 </h1>
+<h2>Notes Public</h2>
+<div>
+  {% for note in publicNotes %}
+  {{note.id}}<br />
+  {{note.title}}<br />
+  {{note.text}}<br />
+  {{note.isPublic}}<br />
+  {{note.userID}}<br />
+  {% endfor %}
+</div>
 <h2 class="subtitle">
-  Easy authentication and authorization in Flask.
+  Used information from:<br />
+  https://www.digitalocean.com<br />
+  https://www.stackoverflow.com<br />
+  https://www.w3schools.com/python<br />
+  https://www.github.com
 </h2>
 {% endblock %}
