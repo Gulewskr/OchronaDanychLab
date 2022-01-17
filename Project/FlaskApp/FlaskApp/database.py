@@ -1,12 +1,11 @@
+#Bazadanych
+from passlib.hash import sha256_crypt
 from flask_sqlalchemy import SQLAlchemy
-from flask import current_app
 from flask_login import UserMixin
-
-import PyCrypto
 
 db = SQLAlchemy()
 
-
+#UserMixin - flask wykorzystuje klase do logowania (niezbedne pola i funkcje)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(), index=True, unique=True)
@@ -15,8 +14,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(), index=True, unique=True)
 
     def set_password(self, password):
-        self.password = bcrypt.hashpw(
-            password.encode(), bcrypt.gensalt()).decode()
+        self.password = sha256_crypt.hash(password)
+        #self.password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
     def __repr__(self):
         return f'{self.login}'
@@ -27,26 +26,33 @@ class Note(db.Model):
     title = db.Column(db.String())
     text = db.Column(db.String())
     isPublic = db.Column(db.Boolean())
-    userID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    userID = db.Column(db.String(), db.ForeignKey('user.login'))
 
 class ConnectorNote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     userID = db.Column(db.Integer, db.ForeignKey('user.id'))
     noteID = db.Column(db.Integer, db.ForeignKey('note.id'))
 
-def fill_db_with_values():
+def fillDefault():
     tomas = User(
-        login='Tomasz', email='tomasz@pw.edu.pl', lucky_number=17)
-    tomas.set_password('Pa$$word')
+        login='Tester', 
+        email='email@test.pl', 
+        salt="1234")
+    tomas.set_password('password')
     db.session.add(tomas)
 
-    note = Note(title='Barista potrzebny', heading='Praca',
-                body='W najbliższą sobotę będzie za duży ruch w kawiarni. Potrzebny barista na jeden dzień. Dobra stawka gwarantowana.',
-                owner=tomas, public=False)
+    note = Note(
+        title='Testowa notatka', 
+        text='To jest testowa notatka - notatka jest ustawiona jako publiczna',
+        isPublic=True,
+        userID='Tester')
     db.session.add(note)
 
-    note = Note(title='Wszyscy mile widziani', heading='Zaproszenie',
-                body='Już niedługo odbędzie się ślub mojej córki. Wszyscy goście są mile widziani. Im nas więcej tym weselej.',
-                owner=tomas, public=True)
+    note = Note(
+        title='Testowa notatka 2', 
+        text='To jest testowa notatka - notatka jest ustawiona jako prywanta',
+        isPublic=False,
+        userID='Tester')
     db.session.add(note)
 
     db.session.commit()

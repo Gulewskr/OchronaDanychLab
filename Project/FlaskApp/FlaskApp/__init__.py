@@ -1,44 +1,40 @@
 from flask import Flask
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from project import db, create_app, models
-
-#app = Flask(__name__)
-#@app.route("/")
-#def hello():
-#    return "Hello, I love Digital Ocean!"
-#if __name__ == "__main__":
-#    app.run()
-
-db.create_all(app=create_app())
+from database import db, User, fillDefault
 
 #inicjalizacja
-db = SQLAlchemy()
+app = Flask(__name__)
 
-def create_app():
-    app = Flask(__name__)
+#klucz do szyfrowania sesji użytkownika
+app.config['SECRET_KEY'] = 'secret-key-goes-here'
+#adress do bazy danych
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    app.config['SECRET_KEY'] = 'secret-key-goes-here'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    db.init_app(app)
+#Tworzenie bazy danych
+db.init_app(app)
+with app.app_context():
+    db.drop_all()
+    db.create_all()
+    db.session.commit()
+    fillDefault()
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
+#Ścieżki związane z autoryzacją
+from auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
 
-    from .models import User
+#Ścieżki ogólne
+from main import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        # since the user_id is just the primary key of our user table, use it in the query for the user
-        return User.query.get(int(user_id))
-        
-    # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
+#manager logowań
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-    # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-
-    return app
+if __name__ == "__main__":
+    app.run()
