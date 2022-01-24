@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
-from database import db, User, fillDefault
-from config import Config
+from .database import db, User, fillDefault
+from .config import Config
 
 #inicjalizacja
 app = Flask(__name__)
@@ -20,11 +20,11 @@ with app.app_context():
     fillDefault()
 
 #Ścieżki związane z autoryzacją
-from auth import auth as auth_blueprint
+from .auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint)
 
 #Ścieżki ogólne
-from main import main as main_blueprint
+from .main import main as main_blueprint
 app.register_blueprint(main_blueprint)
 
 #manager logowań

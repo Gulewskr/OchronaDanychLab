@@ -1,9 +1,9 @@
 #bez autoryzacji
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
-from database import User, Note, ConnectorNote
-from notesCrypt import decryptNote, encryptNote
-from database import db
+from .database import User, Note, ConnectorNote
+from .notesCrypt import decryptNote, encryptNote
+from .database import db
 
 main = Blueprint('main', __name__)
 

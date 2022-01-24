@@ -4,8 +4,8 @@ import string
 import bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-from config import Config
-from notesCrypt import encryptNote
+from .config import Config
+from .notesCrypt import encryptNote
 
 db = SQLAlchemy()
 
@@ -101,7 +101,6 @@ def fillDefault():
         isPublic=False,
         userID='Tester2')
     db.session.add(note)
-    
     db.session.commit()
 
     noteID = Note.query.order_by(Note.id.desc()).first()

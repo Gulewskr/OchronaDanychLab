@@ -1,6 +1,6 @@
 #Szyfrowanie i odszyfrowywanie notatek
 from Crypto.Cipher import AES
-from config import Config
+from .config import Config
 
 def encryptNote(note):
     cipher = AES.new(Config.NOTEKEY, AES.MODE_CFB, Config.NOTEKIV)

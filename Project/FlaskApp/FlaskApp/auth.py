@@ -2,7 +2,7 @@
 from xmlrpc.client import DateTime
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
-from database import db, User, ResetToken
+from .database import db, User, ResetToken
 from datetime import datetime
 
 auth = Blueprint('auth', __name__)
