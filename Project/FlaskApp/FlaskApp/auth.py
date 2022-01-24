@@ -7,8 +7,13 @@ from database import db, User, ResetToken
 from datetime import datetime
 #walidacja
 from valid import passwordValidation, loginVallidation, emailVallidation
+#generacja tokenu i wysłąnie mail'a
+import random
+import string
+from flask_mail import Mail, Message
 
 auth = Blueprint('auth', __name__)
+mail = Mail()
 
 @auth.route('/login')
 def login():
@@ -126,15 +131,20 @@ def passwordResetReq_post():
         flash('Error Occured')
         return redirect(url_for('auth.passwordResetReq'))
 
+    _token = ''.join(random.choices(string.ascii_lowercase, k=32))
+
     token = ResetToken(
         userID = user.id,
-        token = "SBM2115",
+        token = _token,
         DataCreate = datetime.now()
     )
     db.session.add(token)
     db.session.commit()
 
     flash('Reset password on\n/password/reset/' + token.token + '\n Mail could be sent to:\n' + user.email)
+    msg = Message('Reset password', sender = 'rafal.gulewski.stud@interia.pl', recipients = ['rafalgulewski@gmail.com'])
+    msg.body = 'Reset password on\n/password/reset/' + token.token + '\n Mail could be sent to:\n' + user.email
+    mail.send(msg)
     return redirect(url_for('auth.passwordResetReq'))
 
 #Strona do resetowania hasła
@@ -147,10 +157,6 @@ def passwordResetPasswordToken_post(token):
     #token = request.form.get('token')
     password = request.form.get('password')
     passwordNew = request.form.get('passwordNew')
-    
-    print(token)
-    print(password)
-    print(passwordNew)
 
     if password != passwordNew:
         flash('Passwords aren\'t the same')

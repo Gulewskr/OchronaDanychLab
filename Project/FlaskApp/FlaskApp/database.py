@@ -101,7 +101,6 @@ def fillDefault():
         isPublic=False,
         userID='Tester2')
     db.session.add(note)
-    
     db.session.commit()
 
     noteID = Note.query.order_by(Note.id.desc()).first()

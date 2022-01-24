@@ -14,7 +14,7 @@ def passwordValidation(password):
         return True
     else:
         return False
-
+ 
 #sprawdzanie czy nie ma znaków zagrażających programowi
 def textVallidation(text):
     pat = re.compile(r"^[a-zA-Z0-9 ]*$")
